@@ -1,0 +1,17 @@
+<%
+	var boxclass = "",icon = "";
+	if(type.match(/success|ok|info/i)){
+		boxclass = "alert-success";
+		icon = "glyphicon glyphicon-ok";
+	}
+	else 
+		if(type.match(/error/i)){
+		boxclass = 'alert-danger';
+		icon = "glyphicon glyphicon-remove-circle";
+	}
+%>
+<div class="alert <%= boxclass %>">
+	<h4><%= title %></h4>
+	<span class="<%= icon %>"></span>
+	<%- msg %>
+</div>

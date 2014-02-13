@@ -1,0 +1,44 @@
+<% if(typeof USER !== 'undefined' && USER.options instanceof Array) { %>
+<div class="btn-group">
+	<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+		<%= USER.name %> <span class="caret"></span>
+	</button>
+	<ul id="useroption" class="dropdown-menu" role="menu">
+		<% USER.options.forEach(function(OPTION) { %>
+		<li>
+			<a <%- OPTION.target?"target='"+OPTION.target+"'":"" %> class="<%- OPTION.handler?OPTION.handler:'' %>"
+					 id="<%- OPTION.id %>" href="<%- OPTION.link?OPTION.link:'#' %>">
+				<%- OPTION.title %>
+			</a>
+		</li>
+		<% }) %>
+	</ul>
+</div>
+<% } %>
+<div class="btn-group">
+<% if(OPTIONS instanceof Array && OPTIONS.length) { %>
+	<a href="#" class="btn btn-default" data-toggle="dropdown" title="<%= txtOption %>">
+		<span class="glyphicon glyphicon-align-justify"></span>
+	</a>
+	<ul id="headeropt" class="dropdown-menu" role="menu" style="left:-100%;">
+		<% OPTIONS.forEach(function(OPTION) { %>
+		<li>
+			<a <%- OPTION.target?"target='"+OPTION.target+"'":"" %> class="<%- OPTION.handler?OPTION.handler:'fancybox' %>"
+					 id="<%- OPTION.id %>" href="<%- OPTION.link?OPTION.link:'#' %>">
+				<%- OPTION.title %>
+			</a>
+		</li>
+		<% }) %>
+	</ul>
+<% } %>
+<% if(typeof CONFIG !=='undefined') { %>
+	<a href="<%- CONFIG %>" title="<%= txtCfg %>" class="btn btn-default">
+		<span class="glyphicon glyphicon-wrench"></span>
+	</a>
+<% } %>
+<% if(typeof HELP !=='undefined') { %>
+	<a href="<%- HELP %>" id="pgAyuda" title="<%= txtHelp %>" class="btn btn-default">
+		<span class="glyphicon glyphicon-question-sign"></span>
+	</a>
+<% } %>
+</div>

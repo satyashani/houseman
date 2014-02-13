@@ -1,0 +1,12 @@
+<a href="<%= list.link %>" class="dropdown-toggle" data-toggle="dropdown"> <%= list.label %> <b class="caret"></b></a>
+<ul class="dropdown-menu">
+	<%
+		list.options.forEach(function(o){
+			var id = o.id ? "id='"+o.id+"'" :'';
+			var cls = o.class ? "class='"+o.id+"'" :'';
+	%>
+			<li><a <%- id+" "+cls %> href="<%= o.link %>"><%= o.label %></a></li>
+	<%
+		});
+	%>
+</ul>

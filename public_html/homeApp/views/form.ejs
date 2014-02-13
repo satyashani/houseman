@@ -1,0 +1,74 @@
+<div class="col-lg-8 col-md-8 col-sm-8">
+	<h3 style='margin-top:20px;'><%= title %></h3>
+	<%
+	var enctype="";
+	inputs.forEach(function(input){
+		if(input.type=='file') enctype = "enctype='multipart/form-data'";
+	})
+	var formId = typeof formid !== 'undefined' ? formid : ("form_"+Math.random()*1000);
+	var ajaxenabled = typeof ajax !== 'undefined' && ajax?'ajaxform':'';
+	%>
+	<form <%- enctype %> class="form-horizontal <%= ajaxenabled %>" action="<%= action  %>" method="POST" id="<%= formId %>" >
+			<%
+			inputs.forEach(function(field){
+				if(field.type=="header"){
+					%>
+					<h4 style='margin-top:20px;color:blue;'><%- field.label %></h4>
+					<%
+					return;
+				}
+				var value = field.value?field.value:"";
+				var checked = field.type == 'checkbox' && value == true?"checked":"";
+				var readonly = field.readonly?"readonly":"";
+				var required = field.required?"required=true":"";
+			%>
+				<div class="form-group" style="margin-top: 30px;">
+					<label class="col-lg-3 col-md-3 col-sm-3 control-label" style="text-align:left;" for="<%= field.id %>"><%- field.label %></label>
+					<div class="col-lg-5 col-md-5 col-sm-5">
+						<% if(field.readonly){ %>
+							<span style='padding:5px;display:inline-block;'><%- value %></span>
+						<% } else if(field.type=="select"){ %>
+							<select class="form-control" name="<%= field.id %>" id="<%= field.id %>" value="<%= value %>" <%= readonly %> >
+								<%
+									field.options.forEach(function(opt){
+										var sel = opt.selected?"selected='selected'":""; %>
+										<option value='<%= opt.value %>' <%= sel %> > <%= opt.label %> </option>
+										<%
+									});
+								%>
+							</select>
+						<% }else if(field.type=="date"){ %>
+							<input type='text' name='<%= field.id %>' id='<%= field.id %>' placeholder='<%- field.label %>' value='<%= value %>' class='date form-control'  <%= readonly %> />
+						<% }else if(field.type=="checkbox"){ %>
+							<input type='checkbox' class="form-control" name='<%= field.id %>' id='<%= field.id %>' <%= checked %>  <%= readonly %> <%= required %> />
+						<% } else{ %>
+							<input type='<%= field.type %>' class="form-control" name='<%= field.id %>' id='<%= field.id %>' placeholder='<%= field.label %>' value='<%= value %>' <%= checked %>  <%= readonly %> <%= required %> />
+						<% } %>
+					</div>
+				</div>
+			<%
+			});			
+			if(typeof submittext !== 'undefined' && submittext){ %>
+				<div class="control-group" style="margin-top: 30px;">
+					<div class="controls">
+						<button type="submit" class="btn btn-primary"><%= submittext %></button>
+					</div>
+				</div>
+			<% } 
+			if(ajaxenabled){ %>
+			<div class='ajaxoutput form-group' style="margin-top: 30px;min-height: 80px;">
+				
+			</div>
+			<% } %>
+			
+	</form>
+	<% 
+		if(typeof jsinit !== 'undefined' && jsinit){
+	%>
+		<script type="text/javascript">
+			$(document).ready(<%= jsinit %>);
+		</script>
+	<%
+		}
+	%>
+</div>
