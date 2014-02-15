@@ -9,58 +9,103 @@
  * 
  * *************************************************************** */
 
-var suggest = function(input,otherData,url){
-	$.get(url,otherData,function(data){
-		var list = $("<div class='></div>")
+function suggest(input,otherData,url){
+	input.autocomplete({
+		params: otherData,
+		serviceUrl: url,
+		
+	});
+};
+
+function allocate(){
+	$("form#allocate input#area").change(function(){
+		$.get("/suggest/number",{
+			type: $("form#allocate input#type").val(),
+			area: $("form#allocate input#area").val()
+		},function(data){
+			$("form#allocate select#number").empty();
+			data.suggestions.forEach(function(d){
+				$("form#allocate select#number").append($("<option value='"+d.data+"'>"+d.value+"</option>"));
+			});
+		});
 	});
 }
-var xraySearchBaseTerm = "";
-$("input#search").keyup(function(e){
-	var term = $(this).val(), list = $('div#suggest li'), items = list.size();
-	var code = e.keyCode||e.which;
-	if(code===13 && $('li.infocus a').size())
-		window.location = $('li.infocus a').attr("href");
-	if(code===27)
-		$("div#suggest").empty();
-	if(code===40){
-		var added = false;
-		list.each(function(i){
-			if($(this).hasClass("infocus") && i < list.size() - 1 && !added){
-				$(this).removeClass("infocus").next().addClass("infocus");
-				added = true;
+
+function formvalidate(obj){
+	var inputs = $(obj).find('input'),p1="";
+	for(var i=0;i<inputs.size();i++){
+		var inp = inputs.eq(i);
+		var req = inp.attr('required');
+		if(req && !inp.val()){
+			showtip(inp,"Required!!");
+			return false;
+		}
+		if(inp.attr("type") === 'email' && !inp.val().match(/.+@.+\.[A-z]{2,6}$/i)){
+			showtip(inp,"Invalid Email!!");
+			return false;
+		}
+		if(inp.attr("type") === 'password'){
+			var v = inp.val();
+			if(!v.match(/.{6,}/)){
+				showtip(inp,"Minimum 6 characters!!");
+				return false;
 			}
-		});
-		if(!added) list.removeClass("infocus").eq(0).addClass("infocus");
-	}
-	if(code===38){
-		var added = false;
-		list.each(function(i){
-			if($(this).hasClass("infocus") && i > 0 && !added){
-				$(this).removeClass("infocus").prev().addClass("infocus");
-				added = true;
+			if(!v.match(/[0-9]+/)){
+				showtip(inp,"At least one number required!!");
+				return false;
 			}
-		});
-		if(!added) list.removeClass("infocus").eq(list.size()-1).addClass("infocus");
-	}
-	if(xraySearchBaseTerm&&term.match(new RegExp("^"+xraySearchBaseTerm)) && items>0)
-		return;
-	if(term.length>2&&code>=65){
-		var action = $(this).parents('form').attr("action");
-		$.get(action+"?term="+term,function(data){
-			if(data.length){
-				if(data.length<10){
-					xraySearchBaseTerm = term;
-				}
-				$("div#suggest").empty();
-				var list = $("<ul class='dropdown-menu' style=''></ul>");
-				data.forEach(function(v){
-					list.append($("<li><a href='"+v.url+"'>"+v.key+"</a></li>"));
-				});
-				$("div#suggest").append(list);
-				list.fadeIn('fast');
+			if(!v.match(/[^0-9]+/)){
+				showtip(inp,"At least one character required!!");
+				return false;
 			}
-		});
+			if(p1 && v !== p1){
+				showtip(inp,"Passwords don't match!!");
+				return false;
+			}else
+				p1 = v;
+		}
 	}
-}).click(function(){
-	$("div#suggest").empty();
+	return true;
+}
+
+function showtip(obj,tip){
+    $(obj).tooltip({show: 200, hide: 100, placement: "auto", container: "body", title: tip}).tooltip("show");
+    window.setTimeout(function(){(obj).tooltip('destroy')},2000);
+}
+
+function ajaxform(e){
+	e.preventDefault();
+	if(!formvalidate(this))
+		return false;
+	var method = $(this).attr("method");
+	$.fancybox.showLoading();
+    var outdiv = $(this).find("div.ajaxoutput");
+	$.ajax({
+		url: $(this).attr("action"),
+		data : $(this).serialize(),
+		type : method?method:"GET",
+		success: function(data){
+			$.fancybox.hideLoading();
+			outdiv.html(data).fadeIn('fast');
+			window.setTimeout(function(){outdiv.fadeOut('fast').empty();},10000);
+		},
+		error: function(x,t,s){
+			$.fancybox.hideLoading();
+			outdiv.html(s).fadeIn('fast');
+		}
+	});
+};
+
+$(document).ready(function(){
+	$("input[suggesturl]").each(function(){
+		$(this).autocomplete({
+			serviceUrl: $(this).attr("suggesturl")
+		});
+	});
+	$("form.ajaxform").submit(ajaxform);
+	$('form').each(function(){
+		var f = eval($(this).attr("id"));
+		if(typeof f  === "function")
+			f.call(this);
+	});
 });

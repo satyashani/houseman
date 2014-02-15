@@ -16,11 +16,28 @@ var app = require("express")();
 
 var view = function(req){
 	this.req = req;
+	this.js = [];
+	this.css = [];
+	this.addCss("style.css");
+	this.addCss("bootstrap.min.css");
+	this.addCss("bootstrap-theme.min.css");
+	this.addJs("d3.v3.min.js");
+	this.addJs("jquery.min.js");
+	this.addJs("jquery.autocomplete.min.js");
+	this.addJs("fancybox2/source/jquery.fancybox.pack.js");
+	this.addJs("bootstrap.min.js");
+	this.addJs("page.js");
+};
+
+view.prototype.addJs = function(filename){
+	this.js.push(filename);
+};
+view.prototype.addCss = function(filename){
+	this.css.push(filename);
 };
 
 view.prototype.getHtml = function(template,vars){
 	var path = app.get("views")+"/"+template+".ejs";
-    console.log(path);
 	if(!fs.existsSync(path)){
 		console.log("File "+path+" not found while rendering.");
 		return "";
@@ -35,6 +52,8 @@ view.prototype.getPage = function(sections){
 			{ 'link' : "/quarters", "label" : "Quarters"}
 		]
 	};
+	data.js = this.js;
+	data.css = this.css;
 	if(!data.title)
 		data.title = "Express";
 	if(!data.topMenu)
@@ -47,5 +66,13 @@ view.prototype.getPage = function(sections){
 		data.content = "";
 	return this.getHtml("index",data);
 };
+
+view.prototype.getSuccess = function(title,msg){
+    return this.getHtml("message",{type: "success", title: title, msg: msg});
+}
+
+view.prototype.getError = function(title,msg){
+    return this.getHtml("message",{type: "error", title: title, msg: msg});
+}
 
 module.exports = view;

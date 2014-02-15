@@ -2,14 +2,24 @@
 <html ng-app>
   <head>
     <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-    <link rel='stylesheet' href='/stylesheets/bootstrap.min.css' />
-    <link rel='stylesheet' href='/stylesheets/bootstrap-theme.min.css' />
-	<script type="text/javascript" src="/javascripts/d3.v3.min.js"></script>
-	<script type="text/javascript" src="/javascripts/jquery.min.js"></script>
-	<script type="text/javascript" src="/javascripts/fancybox2/source/jquery.fancybox.pack.js"></script>
-	<script type="text/javascript" src="/javascripts/bootstrap.min.js"></script>
-	<script type="text/javascript" src="/javascripts/page.js"></script>
+	<%
+		if(typeof css !== "undefined" && css.length){
+			css.forEach(function(v){
+			%>
+				<link rel="stylesheet" type="text/css" href="/stylesheets/<%= v %>" />
+			<%
+			});
+		}
+	%>
+	<%
+		if(typeof js !== "undefined" && js.length){
+			js.forEach(function(v){
+			%>
+				<script type="text/javascript" src="/javascripts/<%= v %>"></script>
+			<%
+			});
+		}
+	%>
   </head>
   <body>
 		<div id="header" class="navbar navbar-default" role="navigation"  style="min-height: 0px; position: fixed; top: 0px; width: 99%; margin-left: 0px; z-index: 100;">

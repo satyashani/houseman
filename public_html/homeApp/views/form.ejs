@@ -21,6 +21,7 @@
 				var checked = field.type == 'checkbox' && value == true?"checked":"";
 				var readonly = field.readonly?"readonly":"";
 				var required = field.required?"required=true":"";
+				var suggest = field.suggesturl?"suggesturl="+field.suggesturl:"";
 			%>
 				<div class="form-group" style="margin-top: 30px;">
 					<label class="col-lg-3 col-md-3 col-sm-3 control-label" style="text-align:left;" for="<%= field.id %>"><%- field.label %></label>
@@ -42,24 +43,24 @@
 						<% }else if(field.type=="checkbox"){ %>
 							<input type='checkbox' class="form-control" name='<%= field.id %>' id='<%= field.id %>' <%= checked %>  <%= readonly %> <%= required %> />
 						<% } else{ %>
-							<input type='<%= field.type %>' class="form-control" name='<%= field.id %>' id='<%= field.id %>' placeholder='<%= field.label %>' value='<%= value %>' <%= checked %>  <%= readonly %> <%= required %> />
+						<input type='<%= field.type %>' class="form-control" name='<%= field.id %>' id='<%= field.id %>' placeholder='<%= field.label %>' value='<%= value %>' <%= checked %> <%= suggest %> <%= readonly %> <%= required %> />
 						<% } %>
 					</div>
 				</div>
 			<%
-			});			
+			});
+			if(ajaxenabled){ %>
+				<div class='ajaxoutput form-group' style="margin-top: 30px;min-height: 80px;">
+
+				</div>
+			<% }
 			if(typeof submittext !== 'undefined' && submittext){ %>
 				<div class="control-group" style="margin-top: 30px;">
 					<div class="controls">
 						<button type="submit" class="btn btn-primary"><%= submittext %></button>
 					</div>
 				</div>
-			<% } 
-			if(ajaxenabled){ %>
-			<div class='ajaxoutput form-group' style="margin-top: 30px;min-height: 80px;">
-				
-			</div>
-			<% } %>
+			<% }  %>
 			
 	</form>
 	<% 
