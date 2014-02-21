@@ -22,14 +22,15 @@
 				var readonly = field.readonly?"readonly":"";
 				var required = field.required?"required=true":"";
 				var suggest = field.suggesturl?"suggesturl="+field.suggesturl:"";
+				var lang = field.lang?"lang="+field.lang:"";
 			%>
 				<div class="form-group" style="margin-top: 30px;">
 					<label class="col-lg-3 col-md-3 col-sm-3 control-label" style="text-align:left;" for="<%= field.id %>"><%- field.label %></label>
-					<div class="col-lg-5 col-md-5 col-sm-5">
+					<div class="col-lg-3 col-md-3 col-sm-3">
 						<% if(field.readonly){ %>
 							<span style='padding:5px;display:inline-block;'><%- value %></span>
 						<% } else if(field.type=="select"){ %>
-							<select class="form-control" name="<%= field.id %>" id="<%= field.id %>" value="<%= value %>" <%= readonly %> >
+							<select class="form-control" name="<%= field.id %>" id="<%= field.id %>" value="<%= value %>" <%= readonly %>  <%= suggest %> >
 								<%
 									field.options.forEach(function(opt){
 										var sel = opt.selected?"selected='selected'":""; %>
@@ -43,14 +44,14 @@
 						<% }else if(field.type=="checkbox"){ %>
 							<input type='checkbox' class="form-control" name='<%= field.id %>' id='<%= field.id %>' <%= checked %>  <%= readonly %> <%= required %> />
 						<% } else{ %>
-						<input type='<%= field.type %>' class="form-control" name='<%= field.id %>' id='<%= field.id %>' placeholder='<%= field.label %>' value='<%= value %>' <%= checked %> <%= suggest %> <%= readonly %> <%= required %> />
+						<input type='<%= field.type %>' class="form-control" name='<%= field.id %>' id='<%= field.id %>' placeholder='<%= field.label %>' value='<%= value %>' <%= checked %> <%= suggest %> <%= readonly %> <%= required %> <%= lang %> />
 						<% } %>
 					</div>
 				</div>
 			<%
 			});
 			if(ajaxenabled){ %>
-				<div class='ajaxoutput form-group' style="margin-top: 30px;min-height: 80px;">
+				<div class='ajaxoutput form-group' style="margin-top: 30px;">
 
 				</div>
 			<% }

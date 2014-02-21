@@ -9,26 +9,51 @@
  * 
  * *************************************************************** */
 
+String.prototype.lang = function(){
+    if(this.match(/[\u0900-\u097F]+/i) && !this.match(/[a-z]+/i))
+        return "hi";
+    else
+        return "en";
+}
+
 function suggest(input,otherData,url){
 	input.autocomplete({
 		params: otherData,
-		serviceUrl: url,
-		
+		serviceUrl: url
 	});
 };
 
+var getSelectOpts = function(url,querydata,input){
+    $.get(url,querydata,function(data){
+        input.empty();
+        if(data.suggestions && data.suggestions[0]){
+            data.suggestions.forEach(function(d){
+                input.append($("<option value='"+d.data+"'>"+d.value+"</option>"));
+            });
+            input.attr({'value' : data.suggestions[0].data});
+            input.change();
+        }
+    });
+}
+
+var loadLocations = function(form){
+    getSelectOpts("/suggest/number",{
+        type: form.find("select#type").val(),
+        location: form.find("select#location").val()
+    },form.find("select#number"));
+}
+
 function allocate(){
-	$("form#allocate input#area").change(function(){
-		$.get("/suggest/number",{
-			type: $("form#allocate input#type").val(),
-			area: $("form#allocate input#area").val()
-		},function(data){
-			$("form#allocate select#number").empty();
-			data.suggestions.forEach(function(d){
-				$("form#allocate select#number").append($("<option value='"+d.data+"'>"+d.value+"</option>"));
-			});
-		});
-	});
+    $("form#allocate select#location,form#allocate select#type").change(function(){
+        loadLocations($(this).parents("form"));
+    });
+    $("form#allocate input#person").autocomplete({
+        serviceUrl : "/person/selectlist",
+        onSelect: function(s){
+            $(this).text(s.value);
+            $("form#allocate input#person_id").val(s.data);
+        }
+    });
 }
 
 function formvalidate(obj){
@@ -40,6 +65,12 @@ function formvalidate(obj){
 			showtip(inp,"Required!!");
 			return false;
 		}
+        var lang = inp.attr('lang');
+        if(lang && inp.val().lang() !== lang){
+            l = lang!='en'?"Hindi":"English";
+            showtip(inp,"Only "+l+" input is accepted");
+            return false;
+        }
 		if(inp.attr("type") === 'email' && !inp.val().match(/.+@.+\.[A-z]{2,6}$/i)){
 			showtip(inp,"Invalid Email!!");
 			return false;
@@ -64,6 +95,13 @@ function formvalidate(obj){
 			}else
 				p1 = v;
 		}
+        if(inp.hasClass("date")){
+            var v = inp.val();
+            if(v && (!v.match(/^\d{1,2}[\s|\/]+[a-z]{3,}[\s|\/]+[\d]{4}\s*/i) || isNaN(Date.parse(v)))){
+                showtip(inp,"Date must be in the format dd Mon yyyy e.g. 10 Oct 2013");
+                return false;
+            }
+        }
 	}
 	return true;
 }
@@ -86,12 +124,12 @@ function ajaxform(e){
 		type : method?method:"GET",
 		success: function(data){
 			$.fancybox.hideLoading();
-			outdiv.html(data).fadeIn('fast');
-			window.setTimeout(function(){outdiv.fadeOut('fast').empty();},10000);
+			outdiv.html(data).slideDown('fast');
+			window.setTimeout(function(){outdiv.slideUp('fast').empty();},10000);
 		},
 		error: function(x,t,s){
 			$.fancybox.hideLoading();
-			outdiv.html(s).fadeIn('fast');
+			outdiv.html(s).slideDown('fast');
 		}
 	});
 };
@@ -102,10 +140,17 @@ $(document).ready(function(){
 			serviceUrl: $(this).attr("suggesturl")
 		});
 	});
+
+    $('form').each(function(){
+        var f = eval($(this).attr("id"));
+        if(typeof f  === "function")
+            f.call(this);
+    });
+
+    $("select[suggesturl]").each(function(){
+        getSelectOpts($(this).attr("suggesturl"),{},$(this));
+    });
+
 	$("form.ajaxform").submit(ajaxform);
-	$('form').each(function(){
-		var f = eval($(this).attr("id"));
-		if(typeof f  === "function")
-			f.call(this);
-	});
+    $("input.date").datepicker({dateFormat: "dd M yy" });
 });

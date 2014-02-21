@@ -12,33 +12,32 @@
 var db = require("./db");
 var dbname = 'quarter';
 var mdlQuarter = {
-    getRows : function(q,callback){
-        db.query(q,function(err,rows){
-            if(err) callback(err);
-            else callback(rows);
-        });
+    getQuarter : function(type,location,number,callback){
+        var q = "SELECT * FROM "+dbname;
+        var cond = [];
+        if(type) cond.push("type = '"+type.uniq()+"'");
+        if(location) cond.push("location = '"+location.uniq()+"'");
+        if(number) cond.push("number = '"+number.uniq()+"'");
+        if(cond.length)
+            q += " WHERE " + cond.join(" AND ");
+        db.getRows(q,callback);
     },
 
-    getQuarter : function(lang,type,location_id,number,callback){
-        var q = "SELECT * FROM "+dbname+" WHERE ";
-        var cond = [];
-        if(type) cond.push("type = '"+type+"'");
-        if(location_id) cond.push("locations_id = "+location_id);
-        if(number) cond.push("number = '"+number+"'");
-        mdlQuarter.getRows(q,callback);
+    getLocations : function(q,callback){
+        var c = q?" WHERE location LIKE '%"+ q.uniq()+"%'":"";
+        var sql = "SELECT DISTINCT location FROM "+dbname+c;
+        db.getRows(sql,callback);
     },
 
     getTypes : function(callback){
         var q = "SELECT DISTINCT type FROM "+dbname;
-        mdlQuarter.getRows(q,callback);
+        db.getRows(q,callback);
     },
     
-    addQuarter : function(location_id,type,number,callback){
-        var q = "INSERT INTO "+dbname+" (type,locations_id,number) values('"+type+"',"+location_id+",'"+number+"')";
-        db.query(q,function(err,res){
-            if(err) callback(err);
-            else callback(res.insertId);
-        });
+    addQuarter : function(location,type,number,callback){
+        var l = location.uniq(),t=type.uniq(),n=number.uniq();
+        var q = "INSERT INTO "+dbname+" (type,location,number) values('"+t+"','"+l+"','"+n+"')";
+        db.insert(q,callback);
     }
 }
 

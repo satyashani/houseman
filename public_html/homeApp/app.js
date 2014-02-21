@@ -7,13 +7,14 @@ var express = require('express');
 var http = require('http');
 var path = require('path');
 var hview = require("./core/view");
-
+var homeUtil = require("./core/homeUtil");
 var routes = {
 	index: require('./routes/index'),
 	suggest: require('./routes/suggest'),
-    quarters: require('./routes/quarters')
+    quarters: require('./routes/quarters'),
+    person: require('./routes/person')
 }
-var app = express();
+app = express();
 model = {
 	/**
 	 * 
@@ -25,11 +26,11 @@ model = {
 	 * @type mdlQuarter
 	 */
 	quarter: require("./models/mdlQuarter"),
-	/**
-	 * 
-	 * @type mdlLocations
-	 */
-	locations: require("./models/mdlLocations"),
+    /**
+     *
+     * @type mdlPerson
+     */
+    person: require("./models/mdlPersons"),
 	/**
 	 * 
 	 * @type mdlAllocate
@@ -56,6 +57,10 @@ app.use(function(req,res,next){
      */
     req.view = new hview(req);
     next();
+})
+app.use(function(req,res,next){
+    console.log(req.host);
+    next();
 });
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
@@ -64,13 +69,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
-
-app.get('/', routes.index.index);
-app.get('/suggest/type', routes.suggest.type);
-app.get('/suggest/location', routes.suggest.location);
-app.get('/suggest/number', routes.suggest.number);
-app.post('/quarters/addnew', routes.quarters.addNew);
-
+app.locals.sidebar = [];
+for(var i in routes){
+    if(typeof routes[i].routes === "function")
+        routes[i].routes(app);
+}
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });

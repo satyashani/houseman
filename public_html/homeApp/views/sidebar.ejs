@@ -1,4 +1,4 @@
-<% if(OPTIONS instanceof Array && OPTIONS.length) { %>
+<% if(options instanceof Array && options.length) { %>
 <div id="sidebar" class="col-lg-2 col-md-2 col-sm-2" style="margin-top: 20px;" >
 	<div class="affix list-group">
 		<ul class="nav nav-stacked">
@@ -8,7 +8,6 @@
 				<li>
 					<a href="<%= options[i].link %>">
 						<%= options[i].label %>
-						<span class="btn glyphicon glyphicon-minus-sign pull-right" style="top: -5px;"></span>
 					</a>
 					<ul  class="nav" style="margin-left: 30px;">
 					<% 

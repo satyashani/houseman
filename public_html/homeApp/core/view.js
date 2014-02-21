@@ -12,7 +12,6 @@
 
 var ejs = require('ejs');
 var fs = require('fs');
-var app = require("express")();
 
 var view = function(req){
 	this.req = req;
@@ -20,9 +19,12 @@ var view = function(req){
 	this.css = [];
 	this.addCss("style.css");
 	this.addCss("bootstrap.min.css");
+    this.addCss("jquery.fancybox.css");
+    this.addCss("jquery-ui-1.10.2.custom.min.css");
 	this.addCss("bootstrap-theme.min.css");
 	this.addJs("d3.v3.min.js");
 	this.addJs("jquery.min.js");
+    this.addJs("jquery-ui-1.10.3.custom.min.js");
 	this.addJs("jquery.autocomplete.min.js");
 	this.addJs("fancybox2/source/jquery.fancybox.pack.js");
 	this.addJs("bootstrap.min.js");
@@ -60,12 +62,25 @@ view.prototype.getPage = function(sections){
 		data.topMenu = this.getHtml("dropDown",{list : menu});
 	if(!data.topOptions)
 		data.topOptions = "";
-    if(!data.sidear)
-        data.sidebar = "";
+    if(!data.sidebar)
+        data.sidebar = this.getHtmlSidebar(this.getSidebar());
 	if(!data.content)
 		data.content = "";
 	return this.getHtml("index",data);
 };
+
+view.prototype.getSidebar = function(){
+    if(!app.locals.sidebar)
+        app.locals.sidebar = [
+            { "link" : "/quarters/addnew", label: "Add new quarter"},
+            { "link" : "/quarters/allocate", label: "Allocate"}
+        ];
+    return app.locals.sidebar;
+}
+
+view.prototype.getHtmlSidebar = function(sidebar){
+    return this.getHtml("sidebar",{options: sidebar});
+}
 
 view.prototype.getSuccess = function(title,msg){
     return this.getHtml("message",{type: "success", title: title, msg: msg});

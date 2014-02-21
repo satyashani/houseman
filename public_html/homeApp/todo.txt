@@ -1,0 +1,16 @@
+New allocation -
+	On new allocation cases
+	    - not allocated to anyone
+	    - allocated to someone else
+	        with allocation expired
+	        with allocation valid
+	            valid date = null
+	            valid date > today
+	    - allocated to same person
+	        with expired date
+	        without expired date
+	            valid date = null
+	            valid date > today
+		- quarter should not be allocated to same person again.
+		- if allocated to same person check valid date and extend up to given date.
+		-
