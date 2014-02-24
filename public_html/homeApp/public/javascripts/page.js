@@ -10,7 +10,7 @@
  * *************************************************************** */
 
 String.prototype.lang = function(){
-    if(this.match(/[\u0900-\u097F]+/i) && !this.match(/[a-z]+/i))
+    if(this=="" || this.match(/[\u0900-\u097F]+/i) && !this.match(/[a-z]+/i))
         return "hi";
     else
         return "en";
@@ -113,44 +113,57 @@ function showtip(obj,tip){
 
 function ajaxform(e){
 	e.preventDefault();
-	if(!formvalidate(this))
-		return false;
-	var method = $(this).attr("method");
-	$.fancybox.showLoading();
-    var outdiv = $(this).find("div.ajaxoutput");
-	$.ajax({
-		url: $(this).attr("action"),
-		data : $(this).serialize(),
-		type : method?method:"GET",
-		success: function(data){
-			$.fancybox.hideLoading();
-			outdiv.html(data).slideDown('fast');
-			window.setTimeout(function(){outdiv.slideUp('fast').empty();},10000);
-		},
-		error: function(x,t,s){
-			$.fancybox.hideLoading();
-			outdiv.html(s).slideDown('fast');
-		}
-	});
+    var outId = $(this).attr("id")+"_output";
+    ajaxformProc(this,$("div#"+outId),true);
 };
 
-$(document).ready(function(){
-	$("input[suggesturl]").each(function(){
-		$(this).autocomplete({
-			serviceUrl: $(this).attr("suggesturl")
-		});
-	});
+function ajaxformProc(form,outdiv,validate){
+    if(validate && !formvalidate(form))
+        return false;
+    $.fancybox.showLoading();
+    var method = $(form).attr("method");
+    $.ajax({
+        url: $(form).attr("action"),
+        data : $(form).serialize(),
+        type : method?method:"GET",
+        success: function(data){
+            $.fancybox.hideLoading();
+            outdiv.html(data).slideDown('fast');
+            applyCommonEvents(outdiv);
+        },
+        error: function(x,t,s){
+            $.fancybox.hideLoading();
+            outdiv.html(s).slideDown('fast');
+        }
+    });
+};
 
+var applyCommonEvents = function(scope){
+    $(scope).find("input[suggesturl]").each(function(){
+        $(this).autocomplete({
+            serviceUrl: $(this).attr("suggesturl")
+        });
+    });
+
+    $(scope).find("select[suggesturl]").each(function(){
+        getSelectOpts($(this).attr("suggesturl"),{},$(this));
+    });
+
+    $(scope).find("form.ajaxform").submit(ajaxform);
+    $(scope).find("input.date").datepicker({dateFormat: "dd M yy" });
+
+//    $(scope).find("a.fancybox").click(function(e){
+//        e.preventDefault();
+//        $.fancybox.open({'href':$(this).attr("href")});
+//    });
+}
+
+$(document).ready(function(){
     $('form').each(function(){
         var f = eval($(this).attr("id"));
         if(typeof f  === "function")
             f.call(this);
     });
 
-    $("select[suggesturl]").each(function(){
-        getSelectOpts($(this).attr("suggesturl"),{},$(this));
-    });
-
-	$("form.ajaxform").submit(ajaxform);
-    $("input.date").datepicker({dateFormat: "dd M yy" });
+    applyCommonEvents('body');
 });

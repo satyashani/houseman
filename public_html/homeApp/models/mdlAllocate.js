@@ -54,7 +54,6 @@ var mdlAllocate = {
         var d2 = upto_date?"'"+upto_date+"'":"NULL"
         var q = "INSERT INTO "+dbname+" (date_order,date_valid,quarter_id,person_id) values('"+datefrom+"',"+d2+","+qid+","+pid+")";
         mdlAllocate.getAllocations(qid,function(current){
-            console.log(current);
             if(!current.length){
                 db.insert(q,callback);
             }else{

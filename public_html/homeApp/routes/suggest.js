@@ -113,6 +113,18 @@ exports.offices = function(req,res){
     });
 };
 
+exports.e2h = function(req,res){
+    var q = req.query.query?req.query.query:"";
+    translate.e2h(q,function(loc){
+            var out = {
+                query: q,
+                suggestions: []
+            };
+            out.suggestions.push({data : 0, value: loc});
+            res.json(out);
+    });
+};
+
 /**
  *
  * @param {express} app
@@ -124,4 +136,5 @@ exports.routes = function(app){
     app.get('/suggest/personname', exports.personName);
     app.get('/suggest/posts', exports.posts);
     app.get('/suggest/offices', exports.offices);
+    app.get('/suggest/e2h', exports.e2h);
 }

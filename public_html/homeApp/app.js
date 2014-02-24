@@ -12,7 +12,8 @@ var routes = {
 	index: require('./routes/index'),
 	suggest: require('./routes/suggest'),
     quarters: require('./routes/quarters'),
-    person: require('./routes/person')
+    person: require('./routes/person'),
+    list: require('./routes/list')
 }
 app = express();
 model = {
@@ -56,10 +57,6 @@ app.use(function(req,res,next){
      * @type {view}
      */
     req.view = new hview(req);
-    next();
-})
-app.use(function(req,res,next){
-    console.log(req.host);
     next();
 });
 app.use(app.router);

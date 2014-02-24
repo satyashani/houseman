@@ -23,6 +23,23 @@ var mdlQuarter = {
         db.getRows(q,callback);
     },
 
+    getById: function(id,callback){
+        var q = "SELECT * FROM "+dbname+" WHERE id = "+id;
+        db.getRows(q,callback);
+    },
+
+    search : function(type,location,status,searchterm,callback){
+        var q= "SELECT  * from allquarters";
+        var cond = [];
+        if(type) cond.push("type = '"+type.uniq()+"'");
+        if(location) cond.push("location = '"+location.uniq()+"'");
+        if(status) cond.push("status = '"+status+"'");
+        if(searchterm) cond.push("description like '%"+searchterm+"%'");
+        if(cond.length)
+            q += " WHERE " + cond.join(" AND ");
+        db.getRows(q,callback);
+    },
+
     getLocations : function(q,callback){
         var c = q?" WHERE location LIKE '%"+ q.uniq()+"%'":"";
         var sql = "SELECT DISTINCT location FROM "+dbname+c;

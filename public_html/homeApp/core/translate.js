@@ -26,16 +26,13 @@ var translate = {
             }).on("end",function(){
                 var trans = JSON.parse(d);
                 if(trans[0] && trans[0] == "SUCCESS" && trans[1] && trans[1][0] && trans[1][0][1] && trans[1][0][1][0]){
-                    console.log(trans[1][0][1][0]);
                     callback(trans[1][0][1][0]);
                 }
                 else{
-                    console.log("Error is translation - "+d);
                     callback("");
                 }
             })
         }).on("error",function(e){
-            console.log("Error in translation : "+ e.message);
             callback("");
         })
     },
@@ -50,16 +47,13 @@ var translate = {
                         d = d.replace(/,\s*,/g,',"",')
                     var trans = JSON.parse(d);
                     if(trans[0] && trans[0][0] && trans[0][0][0]){
-                        console.log( trans[0][0][0]);
                         callback(trans[0][0][0]);
                     }
                     else{
-                        console.log("Error is translation - "+d);
                         callback("");
                     }
                 })
         }).on("error",function(e){
-                console.log("Error in translation : "+ e.message);
                 callback("");
         })
     }

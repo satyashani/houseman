@@ -36,8 +36,6 @@ var db = {
 
     insert: function(q,callback){
         con.query(q,function(err,res){
-            console.log("insert operation "+q);
-            console.log(res);
             if(err) callback(err);
             else callback(res.insertId);
         });
@@ -45,8 +43,6 @@ var db = {
 
     update: function(q,callback){
         con.query(q,function(err,res){
-            console.log("update operation "+q);
-            console.log(res);
             if(err) callback(err);
             else callback(res);
         });
@@ -54,8 +50,6 @@ var db = {
 
     delete: function(q,callback){
         con.query(q,function(err,res){
-            console.log("delete operation "+q);
-            console.log(res);
             if(err) callback(err);
             else callback(res);
         });

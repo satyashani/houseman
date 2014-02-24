@@ -1,0 +1,28 @@
+<table class="table table-striped">
+	<% if(typeof result !== 'undefined') { %>
+	<thead>
+	<tr>
+		<%
+		result.labels.forEach(function(c){ %>
+		<th><%- c %></th>
+		<% }); %>
+	</tr>
+	</thead>
+	<tbody>
+	<% result.rows.forEach(function(row){ %>
+	<tr>
+		<% result.keys.forEach(function(k){ %>
+		<td> <%- row[k] %></td>
+		<%	});	%>
+		<% if(row.actions) { %>
+		<td>
+			<% row.actions.forEach(function(a){ %>
+			<a href="<%- a.url %>" class='btn btn-default btn-sm fancybox'><%= a.label %></a>
+			<% }); %>
+		</td>
+		<% } %>
+	</tr>
+	<% }); %>
+	</tbody>
+	<% } %>
+</table>

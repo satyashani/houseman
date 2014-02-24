@@ -45,26 +45,43 @@ exports.addNewForm = function(req,res){
 
 
 exports.allocateForm = function(req,res){
-    var allocate = req.view.getHtml("form",{
+    var sendhtml = function(formdata){
+        var allocate = req.view.getHtml("form",formdata);
+        if(req.xhr){
+            res.send(200,allocate);
+        }else{
+            res.send(200,req.view.getPage({
+                title: "Quarters",
+                content: allocate
+            }));
+        }
+    };
+    var formdata = {
         "action" : "/quarters/allocate",
         "title" : "New allocation",
         'formid' : 'allocate',
         'ajax' : true,
         "inputs" : [
             { 'type' : 'hidden' , label: "", 'value' : '' , 'id' : 'person_id'},
-            { 'type' : 'select' , 'label' : 'Type' , 'value': "A", 'id' : 'type', suggesturl: "/suggest/type", options: []} ,
-            { 'type' : 'select' , 'label' : 'Location' , 'value': "", 'id' : 'location', suggesturl: "/suggest/location", options: []},
-            { 'type' : 'select' , 'label' : 'Number' , 'value' : '' , 'id' : 'number',options: []},
             { 'type' : 'text' , 'label' : 'Person name' , 'value' : '' , 'id' : 'person', 'required': true , lang: "hi"},
             { 'type' : 'date' , 'label' : 'Date from' , 'value' : '' , 'id' : 'datefrom'},
             { 'type' : 'date' , 'label' : 'Date till' , 'value' : '' , 'id' : 'dateto'}
         ],
         "submittext" : "Allocate"
-    });
-    res.send(200,req.view.getPage({
-        title: "Quarters",
-        content: allocate
-    }));
+    };
+    if(req.query.quarterid){
+        formdata.inputs.push({ 'type' : 'hidden' , 'value' : req.query.quarterid , 'id' : 'number'});
+        model.quarter.getById(req.query.quarterid,function(rows){
+            if(!rows.length) return res.send(500);
+            formdata.inputs.unshift({ 'type' : 'header' , label: rows[0].type+" - "+rows[0].number +" ," + rows[0].location});
+            sendhtml(formdata);
+        })
+    }else{
+        formdata.inputs.push({ 'type' : 'select' , 'label' : 'Type' , 'value': "A", 'id' : 'type', suggesturl: "/suggest/type", options: []});
+        formdata.inputs.push({ 'type' : 'select' , 'label' : 'Location' , 'value': "", 'id' : 'location', suggesturl: "/suggest/location", options: []});
+        formdata.inputs.push({ 'type' : 'select' , 'label' : 'Number' , 'value' : '' , 'id' : 'number',options: []});
+        sendhtml(formdata);
+    }
 }
 
 exports.allocate = function(req,res){
@@ -84,8 +101,7 @@ exports.allocate = function(req,res){
         else
             res.send(200,req.view.getSuccess("Allocated","Quater allocated to " +req.body.person));
 
-    })
-
+    });
 }
 
 exports.routes = function(app){

@@ -26,7 +26,7 @@ var view = function(req){
 	this.addJs("jquery.min.js");
     this.addJs("jquery-ui-1.10.3.custom.min.js");
 	this.addJs("jquery.autocomplete.min.js");
-	this.addJs("fancybox2/source/jquery.fancybox.pack.js");
+	this.addJs("fancybox2/source/jquery.fancybox.js");
 	this.addJs("bootstrap.min.js");
 	this.addJs("page.js");
 };
@@ -51,15 +51,21 @@ view.prototype.getPage = function(sections){
 	var data = arguments.length?sections:{};
 	var menu = {
 		'link' : '/' , 'label' : 'Home', options: [
-			{ 'link' : "/quarters", "label" : "Quarters"}
+			{ 'link' : "/list/quarters", "label" : "Quarters"}
 		]
 	};
+//    var searchbar = this.getHtml("search",{
+//        "action" : "/search",
+//        "search_string" : "Search"
+//    });
 	data.js = this.js;
 	data.css = this.css;
 	if(!data.title)
 		data.title = "Express";
 	if(!data.topMenu)
 		data.topMenu = this.getHtml("dropDown",{list : menu});
+    if(!data.searchbar)
+        data.searchbar = "";
 	if(!data.topOptions)
 		data.topOptions = "";
     if(!data.sidebar)

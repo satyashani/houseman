@@ -6,6 +6,7 @@
 		if(input.type=='file') enctype = "enctype='multipart/form-data'";
 	})
 	var formId = typeof formid !== 'undefined' ? formid : ("form_"+Math.random()*1000);
+	var outputdivid = formId+"_output";
 	var ajaxenabled = typeof ajax !== 'undefined' && ajax?'ajaxform':'';
 	%>
 	<form <%- enctype %> class="form-horizontal <%= ajaxenabled %>" action="<%= action  %>" method="POST" id="<%= formId %>" >
@@ -51,7 +52,7 @@
 			<%
 			});
 			if(ajaxenabled){ %>
-				<div class='ajaxoutput form-group' style="margin-top: 30px;">
+				<div id="<%= outputdivid %>" class='form-group' style="margin-top: 30px;">
 
 				</div>
 			<% }

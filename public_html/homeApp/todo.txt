@@ -13,4 +13,14 @@ New allocation -
 	            valid date > today
 		- quarter should not be allocated to same person again.
 		- if allocated to same person check valid date and extend up to given date.
+
+Search -
+	Unallocated
+	Allocated
+		- to a person
+		- to an office
+		- in an area
+		- of a type
+	Unauthorized occupation
+	Allotted but not occupied
 		-
