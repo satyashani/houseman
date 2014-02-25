@@ -68,13 +68,13 @@ exports.personSelect = function(req,res){
 }
 
 exports.routes = function(app){
-    app.get('/person/addnew', exports.addNewForm);
-    app.post('/person/addnew', exports.addNew);
+    app.get('/person/addnew',accessCheck('12'), exports.addNewForm);
+    app.post('/person/addnew',accessCheck('12'), exports.addNew);
     app.get('/person/selectlist', exports.personSelect);
     app.locals.sidebar.push({
-        link: "#", label: "Person" , options: [
-            {"link" : "/person/addnew", "label" : "Add new"},
-            {"link" : "/person/edit", "label" : "Edit"}
+        link: "#", label: "Person" , roles: "123", options: [
+            {"link" : "/person/addnew", "label" : "Add new", roles:  "123"},
+            {"link" : "/person/edit", "label" : "Edit", roles:  "123"}
         ]
     });
 }

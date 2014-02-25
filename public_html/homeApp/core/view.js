@@ -49,21 +49,23 @@ view.prototype.getHtml = function(template,vars){
 
 view.prototype.getPage = function(sections){
 	var data = arguments.length?sections:{};
-	var menu = {
-		'link' : '/' , 'label' : 'Home', options: [
-			{ 'link' : "/list/quarters", "label" : "Quarters"}
-		]
-	};
 //    var searchbar = this.getHtml("search",{
 //        "action" : "/search",
 //        "search_string" : "Search"
 //    });
 	data.js = this.js;
 	data.css = this.css;
+    var topLinks = {
+        options: [
+            {link: "/", label: "Home"}
+        ]
+    };
+    if(!this.req.session.user) topLinks.options.push({link : "/user/login", label: "Login"});
+    else topLinks.options.push({link : "#", label: this.req.session.user.name, options: [{link: "/user/logout", label: "Logout"}]});
 	if(!data.title)
 		data.title = "Express";
 	if(!data.topMenu)
-		data.topMenu = this.getHtml("dropDown",{list : menu});
+		data.topMenu = this.getHtml("topMenuLinks",topLinks)
     if(!data.searchbar)
         data.searchbar = "";
 	if(!data.topOptions)
@@ -85,7 +87,8 @@ view.prototype.getSidebar = function(){
 }
 
 view.prototype.getHtmlSidebar = function(sidebar){
-    return this.getHtml("sidebar",{options: sidebar});
+    var r = this.req.session.user && this.req.session.user.role ? this.req.session.user.role : 4;
+    return this.getHtml("sidebar",{options: sidebar, role: r});
 }
 
 view.prototype.getSuccess = function(title,msg){
@@ -96,4 +99,7 @@ view.prototype.getError = function(title,msg){
     return this.getHtml("message",{type: "error", title: title, msg: msg});
 }
 
+view.prototype.getJsRedirect = function(url){
+    return "<script>window.location.href = '"+url+"'</script>";
+}
 module.exports = view;

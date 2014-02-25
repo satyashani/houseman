@@ -7,13 +7,25 @@ var express = require('express');
 var http = require('http');
 var path = require('path');
 var hview = require("./core/view");
-var homeUtil = require("./core/homeUtil");
+homeUtil = require("./core/homeUtil");
 var routes = {
 	index: require('./routes/index'),
 	suggest: require('./routes/suggest'),
     quarters: require('./routes/quarters'),
     person: require('./routes/person'),
-    list: require('./routes/list')
+    list: require('./routes/list'),
+    user: require('./routes/user')
+}
+accessCheck = function(roles){
+    return function(req,res,next){
+        console.log(roles);
+        if(!req.session.user || !req.session.user.role || roles.indexOf(req.session.user.role)===-1)
+            res.send(401,req.view.getPage(
+                {"title" : "Unauthorised Access" , "content" : req.view.getError("Unauthorized","You're not allowed to access this page.")}
+            ));
+        else
+            next();
+    };
 }
 app = express();
 model = {

@@ -105,14 +105,14 @@ exports.allocate = function(req,res){
 }
 
 exports.routes = function(app){
-    app.get('/quarters/addnew', exports.addNewForm);
-    app.post('/quarters/addnew', exports.addNew);
-    app.get('/quarters/allocate', exports.allocateForm);
-    app.post('/quarters/allocate', exports.allocate);
+    app.get('/quarters/addnew',accessCheck('12'), exports.addNewForm);
+    app.post('/quarters/addnew',accessCheck('123'), exports.addNew);
+    app.get('/quarters/allocate',accessCheck('123'), exports.allocateForm);
+    app.post('/quarters/allocate',accessCheck('123'), exports.allocate);
     app.locals.sidebar.push({
-        link: "#", label: "Quarters" , options: [
-            {"link" : "/quarters/addnew", "label" : "Add new"},
-            {"link" : "/quarters/allocate", "label" : "Allocate"}
+        link: "#", label: "Quarters", roles:  "123" , options: [
+            {"link" : "/quarters/addnew", "label" : "Add new", roles:  "12"},
+            {"link" : "/quarters/allocate", "label" : "Allocate", roles:  "123"}
         ]
     })
 }

@@ -133,7 +133,7 @@ function ajaxformProc(form,outdiv,validate){
         },
         error: function(x,t,s){
             $.fancybox.hideLoading();
-            outdiv.html(s).slideDown('fast');
+            outdiv.html(x.responseText).slideDown('fast');
         }
     });
 };

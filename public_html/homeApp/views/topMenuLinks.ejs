@@ -1,0 +1,26 @@
+<% if(options instanceof Array && options.length) { %>
+	<ul class="nav navbar-nav">
+		<%
+		for(var i=0;i<options.length;i++) {
+			if(options[i].options && options[i].options instanceof Array && options[i].options.length){ %>
+				<li class="dropdown">
+					<a href="<%= options[i].link %>" class="dropdown-toggle <%- options[i].class?options[i].class:"" %>" data-toggle="dropdown">
+						<%= options[i].label %><b class="caret"></b>
+					</a>
+					<ul  class="dropdown-menu">
+						<%
+						for(var j=0;j<options[i].options.length;j++) {
+							suboptions = options[i].options[j];
+						%>
+						<li><a href="<%= suboptions.link %>" style='padding: 7px 15px;'><%= suboptions.label %></a></li>
+						<% } %>
+					</ul>
+				</li>
+		<%  } else { %>
+			<li>
+				<a href="<%= options[i].link %>" class="<%- options[i].class?options[i].class:"" %>"><%= options[i].label %></a>
+			</li>
+		<%  }
+		} %>
+	</ul>
+<% } %>

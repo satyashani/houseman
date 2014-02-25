@@ -67,9 +67,5 @@ exports.quartersList = function(req,res){
 exports.routes = function(app){
     app.get('/list/quarters', exports.quartersForm);
     app.post('/list/quarters', exports.quartersList);
-    app.locals.sidebar.push({
-        link: "#", label: "Lists" , options: [
-            {"link" : "/list/quarters", "label" : "Quarters"}
-        ]
-    });
+    app.locals.sidebar.push( {"link" : "/list/quarters", "label" : "Quarter Lists"});
 }

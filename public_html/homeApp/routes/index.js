@@ -4,7 +4,7 @@
  */
 
 exports.index = function(req, res){
-	res.redirect("/quarters/addnew");
+	res.redirect("/list/quarters");
 };
 
 exports.lang = function(req,res){
