@@ -10,7 +10,7 @@
  * *************************************************************** */
 var con = require('mysql').createConnection({
     host     : 'localhost',
-    database : 'mydb',
+    database : 'houseman',
     user     : 'root',
     password : 'rewq12'
 });
