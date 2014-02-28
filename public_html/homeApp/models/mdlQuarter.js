@@ -25,7 +25,7 @@ var mdlQuarter = {
 
     getById: function(id,callback){
         var q = "SELECT * FROM "+dbname+" WHERE id = "+id;
-        db.getRows(q,callback);
+        db.getRow(q,callback);
     },
 
     search : function(type,location,status,searchterm,callback){

@@ -16,7 +16,7 @@ var dbname = 'allocation';
 var dbname_old = 'old_allocate';
 var mdlAllocate = {
     deAllocate : function(qid,callback){
-        var sql = "INSERT INTO "+dbname_old+" (SELECT * FROM mydb.allocation WHERE quarter_id = "+qid+");"
+        var sql = "INSERT INTO "+dbname_old+" (SELECT * FROM "+dbname+" WHERE quarter_id = "+qid+");"
         var sql2 = "DELETE FROM " + dbname +" WHERE quarter_id = "+qid;
         db.insert(sql,function(res){
             if(util.isError(res)) callback(res);

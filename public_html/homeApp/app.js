@@ -19,10 +19,16 @@ var routes = {
 accessCheck = function(roles){
     return function(req,res,next){
         console.log(roles);
-        if(!req.session.user || !req.session.user.role || roles.indexOf(req.session.user.role)===-1)
-            res.send(401,req.view.getPage(
-                {"title" : "Unauthorised Access" , "content" : req.view.getError("Unauthorized","You're not allowed to access this page.")}
-            ));
+        if(!req.session.user || !req.session.user.role || roles.indexOf(req.session.user.role)===-1){
+            var content =  req.view.getError("Unauthorized","You're not allowed to access this page.");
+            if(req.xhr){
+                res.send(200,content);
+            }else{
+                res.send(200,req.view.getPage(
+                    {"title" : "Unauthorised Access" , "content" :content}
+                ));
+            }
+        }
         else
             next();
     };

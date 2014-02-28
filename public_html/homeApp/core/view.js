@@ -23,10 +23,12 @@ var view = function(req){
     this.addCss("jquery-ui-1.10.2.custom.min.css");
 	this.addCss("bootstrap-theme.min.css");
 	this.addJs("d3.v3.min.js");
-	this.addJs("jquery.min.js");
+	this.addJs("jquery-1.10.1.min.js");
     this.addJs("jquery-ui-1.10.3.custom.min.js");
+    this.addJs("jquery.mousewheel-3.0.6.pack.js");
 	this.addJs("jquery.autocomplete.min.js");
-	this.addJs("fancybox2/source/jquery.fancybox.js");
+	this.addJs("jquery.fancybox.js");
+//    this.addJs("jquery.colorbox-min.js");
 	this.addJs("bootstrap.min.js");
 	this.addJs("page.js");
 };

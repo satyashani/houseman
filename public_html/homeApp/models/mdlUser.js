@@ -25,14 +25,13 @@ var mdlUser = {
             if(row.id && row.password && row.password == crypt(p)){
                 delete row.password;
             }
-            callback(row)
-        })
+            callback(row);
+        });
     },
     create : function(username,pass,name,role, callback){
         var q = "INSERT INTO " + dbname+ " (username,password,name,role) values( '"+username+"','"+crypt(pass)+"','"+name+"',"+role+")";
-        console.log(q);
         db.insert(q,function(id){
-            callback(id)
+            callback(id);
         });
     }
 }

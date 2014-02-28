@@ -152,10 +152,17 @@ var applyCommonEvents = function(scope){
     $(scope).find("form.ajaxform").submit(ajaxform);
     $(scope).find("input.date").datepicker({dateFormat: "dd M yy" });
 
-//    $(scope).find("a.fancybox").click(function(e){
-//        e.preventDefault();
-//        $.fancybox.open({'href':$(this).attr("href")});
-//    });
+    $(scope).find("a.fancybox").click(function(e){
+        e.preventDefault();
+        $.fancybox.open({'href':$(this).attr("href")},{type: 'ajax',afterShow: function(){
+            applyCommonEvents(".fancybox-inner");
+        }});
+    });
+
+    $(scope).find("a#cancelAction").click(function(e){
+        e.preventDefault();
+        $.fancybox.close();
+    });
 }
 
 $(document).ready(function(){

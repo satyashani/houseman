@@ -102,13 +102,36 @@ exports.allocate = function(req,res){
             res.send(200,req.view.getSuccess("Allocated","Quater allocated to " +req.body.person));
 
     });
-}
+};
+
+exports.deallocate = function(req,res){
+    if(!req.query.quarterid)
+        return res.send(200,req.view.getError("Error!","No quarter was selected"));
+    if(!req.query.deallocateconfirm){
+        model.quarter.getById(req.query.quarterid,function(q){
+            res.send(200,req.view.getHtml("confirm",{
+                "title" : "Cancel allottment",
+                "yesurl" :'/quarters/deallocate?deallocateconfirm=yes&quarterid='+req.query.quarterid,
+                "nourl" : "#",
+                "action" : "Are you sure you want to cancel the allottment of <b>"+ q.type+","+ q.number+" in "+ q.location+"</b>"
+            }));
+        });
+    }else{
+        model.allocate.deAllocate(req.query.quarterid,function(done){
+            if(util.isError(done))
+                res.send(200,req.view.getError("Error",done.message));
+            else
+                res.send(200,req.view.getSuccess("De-Allocated","Quater allotment cancelled."));
+        });
+    }
+};
 
 exports.routes = function(app){
     app.get('/quarters/addnew',accessCheck('12'), exports.addNewForm);
     app.post('/quarters/addnew',accessCheck('123'), exports.addNew);
     app.get('/quarters/allocate',accessCheck('123'), exports.allocateForm);
     app.post('/quarters/allocate',accessCheck('123'), exports.allocate);
+    app.get('/quarters/deallocate',accessCheck('12'), exports.deallocate);
     app.locals.sidebar.push({
         link: "#", label: "Quarters", roles:  "123" , options: [
             {"link" : "/quarters/addnew", "label" : "Add new", roles:  "12"},

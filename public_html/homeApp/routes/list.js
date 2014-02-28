@@ -21,9 +21,9 @@ exports.quartersForm = function(req,res){
                 types.push({label : r.type, value: r.type});
             });
             var status = [
-                {'label' : "All", value: "all", selected: true},
+                {'label' : "All", value: "all"},
                 {'label' : "Allotted", value: "allotted"},
-                {'label' : "Not allotted", value: "unallotted"},
+                {'label' : "Not allotted", value: "unallotted",selected: true},
                 {'label' : "Vacant", value: "vacant"},
                 {'label' : "Illegal", value: "illegal"}
             ];
@@ -31,7 +31,8 @@ exports.quartersForm = function(req,res){
                 formid: "listquarters", action : "/list/quarters",
                 types : types,
                 locations: locs,
-                status: status
+                status: status,
+                statusSelected: "unallotted"
             });
             res.send(200,req.view.getPage({
                 title : "Quarter lists",
@@ -54,6 +55,8 @@ exports.quartersList = function(req,res){
             rows[r].date_valid =  dv.getTime()?dv.toDateString():"";
             if(rows[r].status == 'unallotted')
                 rows[r].actions.push({'label': "Allot", 'url' : "/quarters/allocate?quarterid="+rows[r].id});
+            if(rows[r].status == 'allotted')
+                rows[r].actions.push({'label': "Cancel", 'url' : "/quarters/deallocate?quarterid="+rows[r].id});
         }
         var result = {
             labels: ['Type','Location','Number','Name','Office','Post','Valid Upto'],
