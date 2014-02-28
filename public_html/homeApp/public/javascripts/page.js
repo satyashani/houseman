@@ -139,6 +139,12 @@ function ajaxformProc(form,outdiv,validate){
 };
 
 var applyCommonEvents = function(scope){
+    $(scope).find('form').each(function(){
+        var f = eval($(this).attr("id"));
+        if(typeof f  === "function")
+            f.call(this);
+    });
+
     $(scope).find("input[suggesturl]").each(function(){
         $(this).autocomplete({
             serviceUrl: $(this).attr("suggesturl")
@@ -154,9 +160,15 @@ var applyCommonEvents = function(scope){
 
     $(scope).find("a.fancybox").click(function(e){
         e.preventDefault();
-        $.fancybox.open({'href':$(this).attr("href")},{type: 'ajax',afterShow: function(){
-            applyCommonEvents(".fancybox-inner");
-        }});
+        var opts = {
+            type: 'ajax',
+            openSpeed	:	200,
+            closeSpeed	:	200,
+            afterShow: function(){
+                applyCommonEvents(".fancybox-inner");
+            }
+        }
+        $.fancybox.open({'href':$(this).attr("href")},opts);
     });
 
     $(scope).find("a#cancelAction").click(function(e){
@@ -166,11 +178,5 @@ var applyCommonEvents = function(scope){
 }
 
 $(document).ready(function(){
-    $('form').each(function(){
-        var f = eval($(this).attr("id"));
-        if(typeof f  === "function")
-            f.call(this);
-    });
-
     applyCommonEvents('body');
 });

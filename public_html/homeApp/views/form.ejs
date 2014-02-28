@@ -1,4 +1,5 @@
-<div class="col-lg-8 col-md-8 col-sm-8">
+<div style="width:600px;">
+	<div class="row" style="width:560px;margin-left: 20px;">
 	<h3 style='margin-top:20px;'><%= title %></h3>
 	<%
 	var enctype="";
@@ -26,8 +27,8 @@
 				var lang = field.lang?"lang="+field.lang:"";
 			%>
 				<div class="form-group" style="margin-top: 30px;">
-					<label class="col-lg-3 col-md-3 col-sm-3 control-label" style="text-align:left;" for="<%= field.id %>"><%- field.label %></label>
-					<div class="col-lg-3 col-md-3 col-sm-3">
+					<label class="col-lg-4 col-md-4 col-sm-4  control-label" style="text-align:left;" for="<%= field.id %>"><%- field.label %></label>
+					<div class="col-lg-5 col-md-5 col-sm-5 ">
 						<% if(field.readonly){ %>
 							<span style='padding:5px;display:inline-block;'><%- value %></span>
 						<% } else if(field.type=="select"){ %>
@@ -74,4 +75,5 @@
 	<%
 		}
 	%>
+	</div>
 </div>

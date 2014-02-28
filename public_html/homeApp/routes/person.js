@@ -73,8 +73,8 @@ exports.routes = function(app){
     app.get('/person/selectlist', exports.personSelect);
     app.locals.sidebar.push({
         link: "#", label: "Person" , roles: "123", options: [
-            {"link" : "/person/addnew", "label" : "Add new", roles:  "123"},
-            {"link" : "/person/edit", "label" : "Edit", roles:  "123"}
+            {"link" : "/person/addnew", "label" : "Add new", roles:  "123"}
+//            ,{"link" : "/person/edit", "label" : "Edit", roles:  "123"}
         ]
     });
 }

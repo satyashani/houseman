@@ -50,13 +50,20 @@ exports.quartersList = function(req,res){
     model.quarter.search(t,l,s,q,function(rows){
         var allocLink = "/quarter/allocate"
         for(var r=0;r<rows.length;r++){
-            rows[r].actions = [];
             var dv = new Date(rows[r].date_valid);
             rows[r].date_valid =  dv.getTime()?dv.toDateString():"";
-            if(rows[r].status == 'unallotted')
-                rows[r].actions.push({'label': "Allot", 'url' : "/quarters/allocate?quarterid="+rows[r].id});
-            if(rows[r].status == 'allotted')
-                rows[r].actions.push({'label': "Cancel", 'url' : "/quarters/deallocate?quarterid="+rows[r].id});
+            rows[r].actions = [];
+            if(req.session.user && (req.session.user.role==1 || req.session.user.role == 2)){
+                if(rows[r].status == 'unallotted' || rows[r].status == 'vacant')
+                    rows[r].actions.push({'label': "Allot", 'url' : "/quarters/allocate?quarterid="+rows[r].id});
+                if(rows[r].status == 'allotted'){
+                    rows[r].actions.push({'label': "Cancel", 'url' : "/quarters/deallocate?quarterid="+rows[r].id});
+                    if(!rows[r]['date_vacate'])
+                        rows[r].actions.push({'label': "Vacated", 'url' : "/quarters/vacated?quarterid="+rows[r].id});
+                    if(!rows[r]['date_possess'])
+                        rows[r].actions.push({'label': "Add Possession Date", 'url' : "/quarters/addpostdate?quarterid="+rows[r].id});
+                }
+            }
         }
         var result = {
             labels: ['Type','Location','Number','Name','Office','Post','Valid Upto'],

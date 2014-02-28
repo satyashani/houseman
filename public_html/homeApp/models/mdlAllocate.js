@@ -38,7 +38,9 @@ var mdlAllocate = {
     },
 
     addPosDate : function(qid,date,callback){
-        var q = "UPDATE "+dbname +" SET date_possess = "+date+" WHERE quarter_id = "+qid;
+        var d = date?new Date(date):new Date();
+        var datefrom = [d.getFullYear(), d.getMonth()+1, d.getDate()].join("-");
+        var q = "UPDATE "+dbname +" SET date_possess = "+datefrom+" WHERE quarter_id = "+qid;
         db.update(q,function(res){
             if(util.isError(res)) callback(res);
             else{
@@ -48,11 +50,19 @@ var mdlAllocate = {
         });
     },
 
-    allocate : function(qid,pid,from_date,upto_date,callback){
+    vacated : function(qid,date,callback){
+        var d = date?new Date(date):new Date();
+        var datefrom = [d.getFullYear(), d.getMonth()+1, d.getDate()].join("-");
+        var q = "UPDATE "+dbname +" SET date_vacate = "+datefrom+" WHERE quarter_id = "+qid;
+        db.update(q,callback);
+    },
+
+    allocate : function(qid,pid,from_date,upto_date,date_posses,callback){
         var d = from_date?new Date(from_date):new Date();
         var datefrom = [d.getFullYear(), d.getMonth()+1, d.getDate()].join("-");
         var d2 = upto_date?"'"+upto_date+"'":"NULL"
-        var q = "INSERT INTO "+dbname+" (date_order,date_valid,quarter_id,person_id) values('"+datefrom+"',"+d2+","+qid+","+pid+")";
+        var dpos = date_posses?"'"+date_posses+"'":"NULL"
+        var q = "INSERT INTO "+dbname+" (date_order,date_valid,date_possess,quarter_id,person_id) values('"+datefrom+"',"+d2+","+dpos+","+qid+","+pid+")";
         mdlAllocate.getAllocations(qid,function(current){
             if(!current.length){
                 db.insert(q,callback);
