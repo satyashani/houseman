@@ -4,7 +4,6 @@
  */
 
 var express = require('express');
-var http = require('http');
 var path = require('path');
 var hview = require("./core/view");
 homeUtil = require("./core/homeUtil");
@@ -89,6 +88,4 @@ for(var i in routes){
     if(typeof routes[i].routes === "function")
         routes[i].routes(app);
 }
-http.createServer(app).listen(app.get('port'), function(){
-  console.log('Express server listening on port ' + app.get('port'));
-});
+module.exports = app;

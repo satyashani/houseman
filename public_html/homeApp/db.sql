@@ -95,6 +95,18 @@ ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_unicode_ci;
 
+CREATE VIEW allquarters AS
+SELECT  q.id,q.type, q.location, q.number,
+        a.date_order, a.date_valid, a.date_possess, a.date_vacate,
+        p.name, p.office,p.post,
+        case WHEN a.date_order IS NULL THEN 'unallotted'
+             WHEN a.date_vacate IS NOT NULL THEN 'vacant'
+             WHEN a.date_valid < CURDATE() THEN 'illegal'
+             ELSE 'allotted' END AS status,
+        CONCAT_WS(' ',q.location,q.number,p.name,p.post,p.office) as description
+FROM quarter q
+LEFT JOIN allocation a ON q.id = a.quarter_id
+LEFT JOIN person p ON a.person_id = p.id;
 
 -- -----------------------------------------------------
 -- Table `houseman`.`users`
@@ -111,8 +123,8 @@ ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_unicode_ci;
 
-
-
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+INSERT INTO `houseman`.`users` (`id`,`username`,`password`,`name`,`role`) VALUES (1,'admin','70e113da910470d08177f3f95b13d8ff','Admin',1);
