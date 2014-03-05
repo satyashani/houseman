@@ -28,8 +28,8 @@ var mdlQuarter = {
         db.getRow(q,callback);
     },
 
-    search : function(type,location,status,searchterm,callback){
-        var q= "SELECT  * from allquarters";
+    search : function(type,location,status,searchterm,offset,limit,callback){
+        var q= "SELECT SQL_CALC_FOUND_ROWS * from allquarters";
         var cond = [];
         if(type) cond.push("type = '"+type.uniq()+"'");
         if(location) cond.push("location = '"+location.uniq()+"'");
@@ -37,7 +37,19 @@ var mdlQuarter = {
         if(searchterm) cond.push("description like '%"+searchterm+"%'");
         if(cond.length)
             q += " WHERE " + cond.join(" AND ");
+        if(limit)
+            q += " LIMIT "+limit;
+        if(offset)
+            q += " OFFSET "+offset;
         db.getRows(q,callback);
+    },
+
+    rowcount: function(callback){
+        var q = "SELECT FOUND_ROWS() as count;";
+        db.getRow(q,function(row){
+            if(row && row['count']) callback(parseInt(row['count']));
+            else callback(0);
+        });
     },
 
     getLocations : function(q,callback){

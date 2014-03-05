@@ -43,34 +43,47 @@ exports.quartersForm = function(req,res){
 };
 
 exports.quartersList = function(req,res){
-    var t = req.body.type && req.body.type != 'all' ? req.body.type : "";
-    var l = req.body.location && req.body.location != 'all' ? req.body.location : "";
-    var s = req.body.status && req.body.status != 'all' ? req.body.status : "";
+    var t = req.body.type && req.body.type != 'all' ? req.body.type : (req.query.type && req.query.type != "all"?req.query.type:"");
+    var l = req.body.location && req.body.location != 'all' ? req.body.location :  (req.query.location && req.query.location != "all"?req.query.location:"");
+    var s = req.body.status && req.body.status != 'all' ? req.body.status :  (req.query.status && req.query.status != "all"?req.query.status:"");
+    var perpage = 100, startIndex = (req.query.start?parseInt(req.query.start):1), start = (startIndex-1)*perpage;
     var q = req.body.term;
-    model.quarter.search(t,l,s,q,function(rows){
-        var allocLink = "/quarter/allocate"
-        for(var r=0;r<rows.length;r++){
-            var dv = new Date(rows[r].date_valid);
-            rows[r].date_valid =  dv.getTime()?dv.toDateString():"";
-            rows[r].actions = [];
-            if(req.session.user && (req.session.user.role==1 || req.session.user.role == 2)){
-                if(rows[r].status == 'unallotted' || rows[r].status == 'vacant')
-                    rows[r].actions.push({'label': "Allot", 'url' : "/quarters/allocate?quarterid="+rows[r].id});
-                if(rows[r].status == 'allotted'){
-                    rows[r].actions.push({'label': "Cancel", 'url' : "/quarters/deallocate?quarterid="+rows[r].id});
-                    if(!rows[r]['date_vacate'])
-                        rows[r].actions.push({'label': "Vacated", 'url' : "/quarters/vacated?quarterid="+rows[r].id});
-                    if(!rows[r]['date_possess'])
-                        rows[r].actions.push({'label': "Add Possession Date", 'url' : "/quarters/addpostdate?quarterid="+rows[r].id});
+    model.quarter.search(t,l,s,q,start,perpage,function(rows){
+        var allocLink = "/quarter/allocate";
+        model.quarter.rowcount(function(totalrows){
+            for(var r=0;r<rows.length;r++){
+                var dv = new Date(rows[r].date_valid);
+                rows[r].date_valid =  dv.getTime()?dv.toDateString():"";
+                rows[r].actions = [];
+                if(req.session.user && (req.session.user.role==1 || req.session.user.role == 2)){
+                    if(rows[r].status == 'unallotted' || rows[r].status == 'vacant')
+                        rows[r].actions.push({'label': "Allot", 'url' : "/quarters/allocate?quarterid="+rows[r].id});
+                    if(rows[r].status == 'allotted'){
+                        rows[r].actions.push({'label': "Cancel", 'url' : "/quarters/deallocate?quarterid="+rows[r].id});
+                        if(!rows[r]['date_vacate'])
+                            rows[r].actions.push({'label': "Vacated", 'url' : "/quarters/vacated?quarterid="+rows[r].id});
+                        if(!rows[r]['date_possess'])
+                            rows[r].actions.push({'label': "Add Possession Date", 'url' : "/quarters/addpostdate?quarterid="+rows[r].id});
+                    }
                 }
             }
-        }
-        var result = {
-            labels: ['Type','Location','Number','Name','Office','Post','Valid Upto'],
-            keys: ['type','location','number','name','office','post','date_valid'],
-            rows: rows
-        }
-        res.send(200,req.view.getHtml("list",{result: result}));
+            var result = {
+                labels: ['Type','Location','Number','Name','Office','Post','Valid Upto'],
+                keys: ['type','location','number','name','office','post','date_valid'],
+                rows: rows
+            };
+            if(totalrows>perpage){
+                var pagingHtml = req.view.getHtml("pagination",{
+                    "link" : "/list/quarters?type="+t+"&location="+l+"&status="+s+"&term="+q,
+                    "pagecount" : Math.ceil(totalrows/perpage),
+                    "pagevar" : "start",
+                    "activei" : startIndex,
+                    "pagingid" : "listquarters"
+                });
+                result.paging = pagingHtml;
+            }
+            res.send(200,req.view.getHtml("list",{result: result}));
+        });
     });
 }
 

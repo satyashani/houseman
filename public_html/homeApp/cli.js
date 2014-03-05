@@ -45,14 +45,14 @@ exports.upload = function(file,table){
                 model.quarter.addQuarter(row[0],row[1],row[2],function(added){
                     console.log("Added row, insertid = "+added);
                 });
-            }
+            };
             break;
     }
     csv().from.path(file, { delimiter: ',', escape: '"' })
     .on('record', function(row,index){
         upload(row);
-    })
-}
+    });
+};
 
 if(process.argv.length<3){
     console.log("No action supplied");

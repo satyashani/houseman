@@ -71,7 +71,7 @@ function formvalidate(obj){
             showtip(inp,"Only "+l+" input is accepted");
             return false;
         }
-		if(inp.attr("type") === 'email' && !inp.val().match(/.+@.+\.[A-z]{2,6}$/i)){
+		if(inp.attr("type") === 'email' && inp.val() && !inp.val().match(/.+@.+\.[A-z]{2,6}$/i)){
 			showtip(inp,"Invalid Email!!");
 			return false;
 		}
@@ -138,6 +138,71 @@ function ajaxformProc(form,outdiv,validate){
     });
 };
 
+function pagingLinkLoad(e){
+    e.preventDefault();
+    var list = $(this).parents("ul.pagination");
+    var outId = list.attr("id")+"_output";
+    var outdiv = $("div#"+outId);
+    $.fancybox.showLoading();
+    $.ajax({
+        url: $(this).attr("href"),
+        type : "POST",
+        success: function(data){
+            $.fancybox.hideLoading();
+            outdiv.html(data).slideDown('fast');
+            applyCommonEvents(outdiv);
+        },
+        error: function(x,t,s){
+            $.fancybox.hideLoading();
+            outdiv.html(x.responseText).slideDown('fast');
+        }
+    });
+}
+
+function setPaging(scope){
+    var wrap = $(scope).find('div.pagination_wrapper'), list = wrap.find('li'),ul = wrap.find('ul.pagination');
+    var l = list.size(),leftbtn = wrap.find('a.paging_left'),rightbtn = wrap.find('a.paging_right');
+    var activeindex = ul.find('li.active').index();
+    var itemstoleft = Math.floor(activeindex/20)*20,toleft= 0,wrapwidth=0;
+    for(var i=0;i<(itemstoleft+21);i++){
+        if(i<itemstoleft)
+            toleft -= list.eq(i).find('a').outerWidth()-1;
+        else{
+            wrapwidth += i<l?list.eq(i).find('a').outerWidth():35;
+        }
+    }
+    list.eq(itemstoleft).addClass("startpoint");
+    wrap.animate({"width":wrapwidth});
+    ul.css({"left" : toleft+"px"});
+    ul.find("a").click(pagingLinkLoad);
+    rightbtn.click(function(e){
+        e.preventDefault();
+        var startindex = ul.find('li.startpoint').index();
+        if(l-startindex>=20){
+            list.eq(startindex).removeClass("startpoint");
+            var toleft = parseInt(ul.css("left"));
+            for(var i=startindex;i<(startindex+20);i++){
+                toleft -= list.eq(i).find('a').outerWidth()-1;
+            }
+            ul.animate({"left" : toleft+"px"});
+            list.eq(i).addClass("startpoint");
+        }
+    });
+    leftbtn.click(function(e){
+        e.preventDefault();
+        var startindex = ul.find('li.startpoint').index();
+        if(startindex>=20){
+            list.eq(startindex).removeClass("startpoint");
+            var toleft = parseInt(ul.css("left"));
+            for(var i=startindex-1;i>=(startindex-20);i--){
+                toleft += list.eq(i).find('a').outerWidth()-1;
+            }
+            ul.animate({"left" : toleft+"px"});
+            list.eq(i+1).addClass("startpoint");
+        }
+    })
+}
+
 var applyCommonEvents = function(scope){
     $(scope).find('form').each(function(){
         var f = eval($(this).attr("id"));
@@ -175,6 +240,8 @@ var applyCommonEvents = function(scope){
         e.preventDefault();
         $.fancybox.close();
     });
+
+    setPaging(scope);
 }
 
 $(document).ready(function(){

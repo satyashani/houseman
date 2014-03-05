@@ -64,7 +64,7 @@ exports.allocateForm = function(req,res){
         "inputs" : [
             { 'type' : 'hidden' , label: "", 'value' : '' , 'id' : 'person_id'},
             { 'type' : 'text' , 'label' : 'Person name' , 'value' : '' , 'id' : 'person', 'required': true , lang: "hi"},
-            { 'type' : 'date' , 'label' : 'Date from' , 'value' : '' , 'id' : 'datefrom'},
+            { 'type' : 'date' , 'label' : 'Date from' , 'value' : '' , 'id' : 'datefrom' , required: true},
             { 'type' : 'date' , 'label' : 'Date till' , 'value' : '' , 'id' : 'dateto'},
             { 'type' : 'date' , 'label' : 'Possession Date' , 'value' : '' , 'id' : 'datepossess'}
         ],

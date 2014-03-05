@@ -1,0 +1,17 @@
+<div class="pagination_wrapper">
+	<ul id="<%= pagingid %>" class="pagination" style="width: 8000px;">
+		<%
+		if(link && pagecount && pagevar){
+			link += "&"+pagevar+"=";
+			var active = typeof activei !== 'undefined' ? activei :1;
+				for(var i=1;i<=pagecount;i++){
+		%>
+		<li class="<%- active==i?'active':'' %>"><a href="<%- link+''+i %>" class="<%- active==i?'active':'' %>"><%= i %></a></li>
+		<%
+		}
+		}
+		%>
+	</ul>
+	<a href="#" class="paging_left" style="">&laquo;</a>
+	<a href="#" class="paging_right">&raquo;</a>
+</div>
