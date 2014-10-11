@@ -71,7 +71,6 @@ var mdlPerson = {
             "dob = "+dateb
         ];
         var q = "UPDATE "+dbname+" SET "+updates.join(", ") +" WHERE id = "+id;
-        console.log(q);
         db.update(q,callback);
     }
 };

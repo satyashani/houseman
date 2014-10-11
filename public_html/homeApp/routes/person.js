@@ -102,7 +102,7 @@ var personEditForm = function(req,res){
             ];
             var html = "<div id='editperson' style='display:none;'>"+allocate+"</div>";
             var a = "<a id='editpersonbtn' href='#' class='btn btn-primary btn-sm pull-right'><span class='glyphicon glyphicon-pencil'></span></a>";
-            html += "<div id='persondetail'><h3>Details</h3>"+a+req.view.getHtml('dl',{list: list})+"</div>";
+            html += "<div id='persondetail'><h3>Details</h3>"+a+req.view.getHtml('proptable',{list: list})+"</div>";
             res.send(200,html);
         }
     });

@@ -83,7 +83,6 @@ var editListFields = function(req,res){
 
 var saveListFields = function(req,res){
     req.session.listFields = {};
-    console.log(JSON.stringify(req.body));
     for(var i in req.body)
         if(allFields.hasOwnProperty(i)) req.session.listFields[i] =  allFields[i];
     res.redirect("/list/quarters");
