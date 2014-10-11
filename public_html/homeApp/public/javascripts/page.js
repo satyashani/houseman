@@ -240,9 +240,17 @@ var applyCommonEvents = function(scope){
         e.preventDefault();
         $.fancybox.close();
     });
+    
+    $(scope).find('a#editpersonbtn').click(function(){
+        $("div#persondetail").fadeOut('fast',function(){
+            $("div#editperson").fadeIn('fast');
+            $.fancybox.update();
+            $.fancybox.reposition();
+        });
+    });
 
     setPaging(scope);
-}
+};
 
 $(document).ready(function(){
     applyCommonEvents('body');

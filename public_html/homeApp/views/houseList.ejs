@@ -1,9 +1,11 @@
-<div class="col-lg-8 col-md-8 col-sm-8 pull-left">
+<div class="row pull-left" style="margin-bottom:20px;">
 	<form id="<%= formid %>" class="form-inline ajaxform" role="search" action="<%= action %>" method="post">
 		<div class="form-group">
+                        <p>Search</p>
 			<input id="search" type="text" class="form-control" placeholder="search" name="term" lang="hi" suggesturl="/suggest/e2h" autocomplete="off" style="width: 300px;"/>
 		</div>
 		<div class="form-group">
+                        <p>Status</p>
 			<select name="status" value="<%= statusSelected %>" class="form-control">
 				<%
 				status.forEach(function(s){
@@ -13,15 +15,17 @@
 			</select>
 		</div>
 		<div class="form-group">
+                        <p>Type</p>
 			<select name="type" class="form-control">
 				<%
 					types.forEach(function(t){
-						var sel = t.selected?"selected='selected'":""; %>
-						<option value='<%= t.value %>' <%= sel %> > <%= t.label %> </option>
+                                            var sel = t.selected?"selected='selected'":""; %>
+                                            <option value='<%= t.value %>' <%= sel %> > <%= t.label %> </option>
 				<% }); %>
 			</select>
 		</div>
 		<div class="form-group">
+                        <p>Area</p>
 			<select name="location" class="form-control">
 				<%
 				locations.forEach(function(l){
@@ -30,11 +34,14 @@
 				<% }); %>
 			</select>
 		</div>
-		<button type="submit" class="btn btn-default">List</button>
+                <div class="form-group">
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;</p>
+                    <button type="submit" class="btn btn-default">List</button>
+		</div>
 	</form>
 	<div id="suggest" style="position: absolute; top: 100%;"></div>
 </div>
-<div id="<%- formid+"_output" %>" class="col-lg-9 col-md-9 col-sm-9" style="margin-top: 20px;">
+<div id="<%- formid+"_output" %>" class="row" style="margin-top: 20px;">
 
 </div>
 <script type="text/javascript">

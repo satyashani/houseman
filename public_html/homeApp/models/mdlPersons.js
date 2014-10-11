@@ -24,6 +24,12 @@ var mdlPerson = {
         q += " LIMIT 15";
         db.getRows(q,callback);
     },
+    
+    getPerson : function(id,callback){
+        var q = "SELECT * FROM "+dbname;
+        q += " WHERE id = "+id;
+        db.getRow(q,callback);
+    },
 
     getPosts : function(q,callback){
         var c = q?" WHERE post LIKE '%"+q+"%'":"";
@@ -43,11 +49,31 @@ var mdlPerson = {
         db.getRows(sql,callback);
     },
 
-    addPerson : function(name,post,office,gender,email,phone,callback){
+    addPerson : function(name,post,office,gender,email,phone,dob,callback){
+        var d = dob?new Date(dob):"";
+        var dateb = d?[d.getFullYear(), d.getMonth()+1, d.getDate()].join("-"):"null";
         var n = name.uniq(),p = post.uniq(),o = office.uniq(),e = email.trim().toLowerCase(),g=gender.toUpperCase().trim();
-        var q = "INSERT INTO "+dbname+" (name,post,office,gender,email,phone) values('"+n+"','"+p+"','"+o+"','"+g+"','"+e+"','"+phone+"')";
+        var q = "INSERT INTO "+dbname+" (name,post,office,gender,email,phone,dob) values('"+n+"','"+p+"','"+o+"','"+g+"','"+e+"','"+phone+","+dateb+")";
         db.insert(q,callback);
+    },
+    
+    editPerson : function(id,name,post,office,gender,email,phone,dob,callback){
+        var n = name.uniq(),p = post.uniq(),o = office.uniq(),e = email.trim().toLowerCase(),g=gender.toUpperCase().trim();
+        var d = dob?new Date(dob):new Date();
+        var dateb = d?"'"+[d.getFullYear(), d.getMonth()+1, d.getDate()].join("-")+"'":"null";
+        var updates = [
+            "name = '"+n+"'",
+            "post = '"+p+"'",
+            "office = '"+o+"'",
+            "gender = '"+g+"'",
+            "email = '"+e+"'",
+            "phone = '"+phone+"'",
+            "dob = "+dateb
+        ];
+        var q = "UPDATE "+dbname+" SET "+updates.join(", ") +" WHERE id = "+id;
+        console.log(q);
+        db.update(q,callback);
     }
-}
+};
 
 module.exports = mdlPerson;

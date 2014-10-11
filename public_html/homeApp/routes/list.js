@@ -8,7 +8,18 @@
  * 
  * 
  * *************************************************************** */
-
+var allFields = {
+    type : "Type",
+    location : "Location",
+    number : "Number",
+    name : "Name",
+    office : "Office",
+    post : "Post",
+    phone : "Contact",
+    date_order : "Alloted on",
+    date_valid : "Valid Upto"
+};  
+    
 exports.quartersForm = function(req,res){
     model.quarter.getLocations("",function(locrows){
         model.quarter.getTypes(function(typerows){
@@ -38,8 +49,44 @@ exports.quartersForm = function(req,res){
                 title : "Quarter lists",
                 content : form
             }));
-        })
-    })
+        });
+    });
+};
+
+var editListFields = function(req,res){
+    if(!req.session.listFields){
+        req.session.listFields = {
+            type : "Type",
+            location : "Location",
+            number : "Number",
+            name : "Name",
+            office : "Office",
+            post : "Post",
+            phone : "Contact",
+            date_order : "Alloted on",
+            date_valid : "Valid Upto"
+        };
+    }
+    var inputs = [];
+    for(var i in allFields)
+       inputs.push({ 'type' : 'checkbox' , 'label' : allFields[i] , 'value' : req.session.listFields.hasOwnProperty(i) , 'id' : i});
+    var form = req.view.getHtml("form",{
+        "action" : "/list/editFields",
+        "title" : "Select list fields",
+        'formid' : 'listfields',
+        'ajax' : false,
+        "inputs" : inputs,
+        "submittext" : "Save"
+    });
+    res.send(200,form);
+};
+
+var saveListFields = function(req,res){
+    req.session.listFields = {};
+    console.log(JSON.stringify(req.body));
+    for(var i in req.body)
+        if(allFields.hasOwnProperty(i)) req.session.listFields[i] =  allFields[i];
+    res.redirect("/list/quarters");
 };
 
 exports.quartersList = function(req,res){
@@ -48,12 +95,19 @@ exports.quartersList = function(req,res){
     var s = req.body.status && req.body.status != 'all' ? req.body.status :  (req.query.status && req.query.status != "all"?req.query.status:"");
     var perpage = 100, startIndex = (req.query.start?parseInt(req.query.start):1), start = (startIndex-1)*perpage;
     var q = req.body.term;
+    if(!req.session.listFields)
+        req.session.listFields = allFields;
+    var fields = Object.keys(req.session.listFields),fieldNames = [];
+    for(var i in req.session.listFields) fieldNames.push(req.session.listFields[i]);
     model.quarter.search(t,l,s,q,start,perpage,function(rows){
-        var allocLink = "/quarter/allocate";
         model.quarter.rowcount(function(totalrows){
             for(var r=0;r<rows.length;r++){
                 var dv = new Date(rows[r].date_valid);
                 rows[r].date_valid =  dv.getTime()?dv.toDateString():"";
+                if(rows[r].status == 'allotted' && rows[r].date_order){
+                    var dto = new Date(rows[r].date_order);
+                    rows[r].date_order =  dto.getTime()?dto.toDateString():"";
+                }
                 rows[r].actions = [];
                 if(req.session.user && (req.session.user.role==1 || req.session.user.role == 2)){
                     if(rows[r].status == 'unallotted' || rows[r].status == 'vacant')
@@ -65,11 +119,12 @@ exports.quartersList = function(req,res){
                         if(!rows[r]['date_possess'])
                             rows[r].actions.push({'label': "Add Possession Date", 'url' : "/quarters/addpostdate?quarterid="+rows[r].id});
                     }
+                    if(rows[r].personid) rows[r].name = {'label': rows[r].name, 'url' : "/person/edit/"+rows[r].personid};
                 }
             }
             var result = {
-                labels: ['Type','Location','Number','Name','Office','Post','Valid Upto'],
-                keys: ['type','location','number','name','office','post','date_valid'],
+                labels: fieldNames,
+                keys: fields,
                 rows: rows
             };
             if(totalrows>perpage){
@@ -90,5 +145,7 @@ exports.quartersList = function(req,res){
 exports.routes = function(app){
     app.get('/list/quarters', exports.quartersForm);
     app.post('/list/quarters', exports.quartersList);
+    app.get('/list/editFields', editListFields);
+    app.post('/list/editFields', saveListFields);
     app.locals.sidebar.push( {"link" : "/list/quarters", "label" : "Quarter Lists"});
 }

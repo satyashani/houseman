@@ -1,4 +1,7 @@
-<%- result.paging? result.paging : "" %>
+<div class="row"><%- result.paging? result.paging : "" %></div>
+<div class="row">
+    <a href="/list/editFields" class="fancybox btn btn-primary btn-sm pull-right">Select table fields</a>
+</div>
 <table class="table table-striped">
 	<% if(typeof result !== 'undefined') { %>
 	<thead>
@@ -13,7 +16,13 @@
 	<% result.rows.forEach(function(row){ %>
 	<tr>
 		<% result.keys.forEach(function(k){ %>
-		<td> <%- row[k] %></td>
+		<td>
+                    <% if(row[k] && row[k].url) { %>
+                    <a href="<%- row[k].url %>" class='fancybox'><%= row[k].label %></a>
+                    <% }else{ %>
+                    <%- row[k] %>
+                    <% } %>
+                </td>
 		<%	});	%>
 		<% if(row.actions) { %>
 		<td>
