@@ -53,7 +53,7 @@ var mdlPerson = {
         var d = dob?new Date(dob):"";
         var dateb = d?[d.getFullYear(), d.getMonth()+1, d.getDate()].join("-"):"null";
         var n = name.uniq(),p = post.uniq(),o = office.uniq(),e = email.trim().toLowerCase(),g=gender.toUpperCase().trim();
-        var q = "INSERT INTO "+dbname+" (name,post,office,gender,email,phone,dob) values('"+n+"','"+p+"','"+o+"','"+g+"','"+e+"','"+phone+","+dateb+")";
+        var q = "INSERT INTO "+dbname+" (name,post,office,gender,email,phone,dob) values('"+n+"','"+p+"','"+o+"','"+g+"','"+e+"','"+phone+"','"+dateb+"')";
         db.insert(q,callback);
     },
     

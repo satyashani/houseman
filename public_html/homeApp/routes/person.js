@@ -16,7 +16,7 @@ exports.addNew = function(req,res){
             translate.e2h(req.body.office,function(office){
                 if(!name || !post || !office)
                     return res.send(200,req.view.getError("Person not added","Failed to translate text."));
-                model.person.addPerson(name,post,office,req.body.gender,req.body.email,req.body.phone,function(added){
+                model.person.addPerson(name,post,office,req.body.gender,req.body.email,req.body.phone,req.body.dob,function(added){
                     if(!isNaN(added))
                         res.send(200,req.view.getSuccess("Person added","New person was added"));
                     else
